@@ -58,25 +58,9 @@ class VA_script:
 ####################################################################
 ### Actions Classes | Start >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ####################################################################
-class Actions:
-  
-  ### Action_000 ###################################################
-  def Action_000(va_data):
-
-    ### Start | Init setting
-   
-    va_data['log'] = {}
-    va_data['log'] = {"d":"For log", "v":{"title":{"d":"For title", "v":"unknown_title"},
-                                          "value":{"d":"For value", "v":""}
-                                          }}
-
-    va_data['items_in_cart'] = {"d":"Items in cart [array]", "v":[
-        {"item_id":{"d":"Item id","v":"98"},"item_q":{"d":"Item quantity","v":4}},
-        {"item_id":{"d":"Item id","v":"560"},"item_q":{"d":"Item quantity","v":1}},
-        {"item_id":{"d":"Item id","v":"34"},"item_q":{"d":"Item quantity","v":2}}  
-      ]}
-
-    va_data['items'] = {"d":"Items in online store [dictionary]", "v":{
+class Items:
+  def __init__(self):
+    self.items = {"d":"Items in online store [dictionary]", "v":{
         "34":{"d":"Item id","v":{
             "attr":{"d":"Attributes of item","v":{
                 "name":{"d":"Name of item","v":"Name_34"},
@@ -98,7 +82,51 @@ class Actions:
                 "department_id":{"d":"Department id","v":"10"}
             }}
         }},
-    }}  
+    }}
+
+  def getAll(self):
+
+    return self.items  
+
+  def getCostByItemId(self, temp):
+
+    return self.items['v'][temp]['v']['attr']['v']['cost']  
+
+class Cart:
+  def __init__(self):
+    self.items_in_cart = {"d":"Items in cart [array]", "v":[
+        {"item_id":{"d":"Item id","v":"98"},"item_q":{"d":"Item quantity","v":4}},
+        {"item_id":{"d":"Item id","v":"560"},"item_q":{"d":"Item quantity","v":1}},
+        {"item_id":{"d":"Item id","v":"34"},"item_q":{"d":"Item quantity","v":2}}  
+      ]}
+
+  def getAll(self):
+
+    return self.items_in_cart
+
+  def GetQuantityOfItemByNumberInList(self, temp):
+
+    return self.items_in_cart['v'][temp]['item_q']
+
+  def GetItemIdOfItemByNumberInList(self, temp):
+
+    return self.items_in_cart['v'][temp]['item_id']
+  
+class Actions:
+  
+  ### Action_000 ###################################################
+  def Action_000(va_data):
+
+    ### Start | Init setting
+   
+    va_data['log'] = {}
+    va_data['log'] = {"d":"For log", "v":{"title":{"d":"For title", "v":"unknown_title"},
+                                          "value":{"d":"For value", "v":""}
+                                          }}
+
+    va_data['items_in_cart'] = va_data['cart_instance']['v'].getAll()
+
+    va_data['items'] = va_data['items_instance']['v'].getAll()
 
     va_data['total_cost'] = {"d":"The TotalCost of the items in the Cart","v":0}
 
@@ -146,22 +174,13 @@ class Actions:
 
     temp__i = va_data['i']['v'] 
 
-    va_data['item_q_020'] = {}
-    va_data['item_q_020']['v'] = va_data['items_in_cart']['v'][temp__i]['item_q']['v']
-    va_data['item_q_020']['d'] = va_data['items_in_cart']['v'][temp__i]['item_q']['d'] 
-    
+    va_data['item_q_020'] = va_data['cart_instance']['v'].GetQuantityOfItemByNumberInList(va_data['i']['v'])
     va_data['custom_log']['v'].append('item_q_020')
 
-    va_data['item_id_020'] = {}
-    va_data['item_id_020']['v'] = va_data['items_in_cart']['v'][temp__i]['item_id']['v']
-    va_data['item_id_020']['d'] = va_data['items_in_cart']['v'][temp__i]['item_id']['d'] 
-
+    va_data['item_id_020'] = va_data['cart_instance']['v'].GetItemIdOfItemByNumberInList(va_data['i']['v'])
     va_data['custom_log']['v'].append('item_id_020')
 
-    va_data['cost_020'] = {}
-    va_data['cost_020']['v'] = va_data['items']['v'][va_data['item_id_020']['v']]['v']['attr']['v']['cost']['v']
-    va_data['cost_020']['d'] = va_data['items']['v'][va_data['item_id_020']['v']]['v']['attr']['v']['cost']['d'] 
-
+    va_data['cost_020'] = va_data['items_instance']['v'].getCostByItemId(va_data['item_id_020']['v'])
     va_data['custom_log']['v'].append('cost_020')
 
     va_data['total_cost']['v'] += va_data['cost_020']['v'] * va_data['item_q_020']['v']
@@ -352,6 +371,10 @@ class VA_box_tools: ##########################################################
 va_data = {}
 va_data['va'] = {}
 
+va_data['cart_instance'] = {'d':"The instance of the Сart class",'v':Cart()}
+va_data['items_instance'] = {'d':"The instance of the Items class",'v':Items()}
+
+### Start the setting for log and tracking options ################
 va_data['va'] = {"is_tracking_on":{"d":"Is tracing ON?? (True/False)","v":True}}
 
 """
@@ -363,11 +386,11 @@ va_data['va']['jump_pause_after_actions'] = {}
 va_data['va']['jump_pause_after_actions']['v'] = ['Action_010']
 va_data['va']['jump_pause_after_actions']['d'] = "The jump pause after actions"
 """
+### End the setting for log and tracking options ##################
+
 
 va_data = VA_box.start(va_data)
 
 print("\n" + str(va_data['total_cost']['d']), '[' + str(va_data['total_cost']['v']) + ']')
 print('\nThe end')
 
-#va_data['va'] = {}
-#print(va_data['va'])
