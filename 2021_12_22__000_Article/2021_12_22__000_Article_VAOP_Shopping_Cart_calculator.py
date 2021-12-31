@@ -8,8 +8,8 @@
 class VA_script:
   def __init__(self):
     self.va_script = {"d":"All VA-scripts", "v":{
-			"va_script_00":{"d":"Init VA-script","v":{
-				  "Action_000":{
+			"va_script_000":{"d":"Init VA-script","v":{
+				  "Action_000_0000":{
 						  "_agent_position":{
 							  "en-US":"In Init block of VA-box",
 							  "ru-RU":"В блоке Init VA-box"
@@ -17,9 +17,42 @@ class VA_script:
 						  "_action_description":{
 							  "_010":"--> init action"
 						  },
-						  "Direction_10":"Action_010",  "_010":"Done"
+						  "Direction_10":"Action_000_0010",  "_010":"Done"
 					  },
-				  "Action_010":{
+				  "Action_000_0010":{
+						  "_agent_position":{
+							  "en-US":"Jump to from Action_010_XXXX-group",
+							  "ru-RU":""
+						  },
+						  "_action_description":{
+							  "_010":"empty"
+						  },
+						  "Direction_10":"Action_010_0000", "_010":""
+					  },
+				  "Action_000_0020":{
+						  "_agent_position":{
+							  "en-US":"Return from Action_000_XXXX-group",
+							  "ru-RU":""
+						  },
+						  "_action_description":{
+							  "_010":"empty"
+						  },
+						  "Direction_10":"Action_000_END", "_010":""
+					  }
+					}
+				},
+			"va_script_010":{"d":"The v-agent calculates the simple cost of cart without any discounts","v":{
+				  "Action_010_0000":{
+						  "_agent_position":{
+							  "en-US":"Init block for group 000",
+							  "ru-RU":""
+						  },
+						  "_action_description":{
+							  "_010":"--> init action"
+						  },
+						  "Direction_10":"Action_010_0010",  "_010":"Done"
+					  },
+				  "Action_010_0010":{
 						  "_agent_position":{
 							  "en-US":"The v-agent is checking the end of array of items",
 							  "ru-RU":"Это конец массива элементов с покупками"
@@ -27,10 +60,10 @@ class VA_script:
 						  "_action_description":{
 							  "_010":"empty"
 						  },
-						  "Direction_10":"Action_020", "_010":"",
-						  "Direction_20":"Action_9000", "_010":""
+						  "Direction_10":"Action_010_0020", "_010":"",
+						  "Direction_20":"Action_010_9000", "_010":""
 					  },
-				  "Action_020":{
+				  "Action_010_0020":{
 						  "_agent_position":{
 							  "en-US":"The v-agent is taking the next item and adding the cost of this items to va_data['total_cost']",
 							  "ru-RU":"V-agent берет следующий элемент и добавляет стоимость этого элемента в va_data ['total_cost']"
@@ -38,9 +71,9 @@ class VA_script:
 						  "_action_description":{
 							  "_010":"empty"
 						  },
-						  "Direction_10":"Action_010",  "_010":""
+						  "Direction_10":"Action_010_0010",  "_010":""
 					  },
-				  "Action_9000":{
+				  "Action_010_9000":{
 						  "_agent_position":{
 							  "en-US":"The v-agent found the end of array of items in the shopping cart",
 							  "ru-RU":"V-agent обнаружил конец массива товаров в корзине."
@@ -48,56 +81,13 @@ class VA_script:
 						  "_action_description":{
 							  "_010":"empty"
 						  },
-						  "Direction_10":"Action_10_000", "_010":"Done"
-					  },
-				  "Action_9010":{
-						  "_agent_position":{
-							  "en-US":"test jump back from Action_10_XXX",
-							  "ru-RU":""
-						  },
-						  "_action_description":{
-							  "_010":"empty"
-						  },
-						  "Direction_10":"Action_END", "_010":"Done"
+						  "Direction_10":"Action_000_0020", "_010":"Return back to Group 000"
 					  }
-				  }
-							
-				},
-			"va_script_10":{"d":"The group of Actions for testing","v":{
-				  "Action_10_000":{
-						  "_agent_position":{
-							  "en-US":"In Init block of VA-box",
-							  "ru-RU":"В блоке Init VA-box"
-						  },
-						  "_action_description":{
-							  "_010":"--> init action"
-						  },
-						  "Direction_10":"Action_10_010",  "_010":"Done"
-					  },
-				  "Action_10_010":{
-						  "_agent_position":{
-							  "en-US":"Action_10_010 jupm to Action_10_020",
-							  "ru-RU":""
-						  },
-						  "_action_description":{
-							  "_010":"empty"
-						  },
-						  "Direction_10":"Action_10_020", "_010":""
-					  },
-				  "Action_10_020":{
-						  "_agent_position":{
-							  "en-US":"Action_10_010 jupm to Action_9010",
-							  "ru-RU":""
-						  },
-						  "_action_description":{
-							  "_010":"empty"
-						  },
-						  "Direction_10":"Action_9010", "_010":""
-					  }
-					}
+				  }						
 				}
 			}
     }
+
   def getVaScript(self, va_data):
 
     return self.va_script['v'][va_data['va']['script_group_code']['v']]['v']
@@ -204,9 +194,11 @@ class Discount:
     }}
 """
 class Actions:
-  
-  ### Action_000 ###################################################
-  def Action_000(va_data):
+  ###  
+  ### Group 000
+  ###
+  ### Action_000_0000 ###################################################
+  def Action_000_0000(va_data):
 
     ### Start | Init setting
    
@@ -239,14 +231,32 @@ class Actions:
     """
     ### End | Init setting
 
-     
-
     va_data['va']['direction']['v'] = "Direction_10"
 
     return va_data
+  ### Action_000_0010 ###################################################
+  def Action_000_0010(va_data):
+    
+    va_data['va']['direction']['v'] = "Direction_10" 
 
-  ### Action_010 ###################################################
-  def Action_010(va_data):
+    return va_data    
+  ### Action_000_0020 ###################################################
+  def Action_000_0020(va_data):
+    
+    va_data['va']['direction']['v'] = "Direction_10" 
+
+    return va_data  
+  ###  
+  ### Group 010
+  ###Action_010_0000
+  ### Action_010_0000 ###################################################
+  def Action_010_0000(va_data):
+    
+    va_data['va']['direction']['v'] = "Direction_10" 
+
+    return va_data    
+  ### Action_010_0010 ###################################################
+  def Action_010_0010(va_data):
     va_data['va']['direction']['v'] = "Direction_10"
 
     va_data['i']['v'] += 1
@@ -260,8 +270,8 @@ class Actions:
 
     return va_data
 
-  ### Action_020 ###################################################
-  def Action_020(va_data):
+  ### Action_010_0020 ###################################################
+  def Action_010_0020(va_data):
 
     temp__i = va_data['i']['v'] 
 
@@ -286,37 +296,19 @@ class Actions:
 
     return va_data
 
-  ### Action_9000 ###################################################
-  def Action_9000(va_data):
+  ### Action_010_9000 ###################################################
+  def Action_010_9000(va_data):
 
     va_data['va']['direction']['v'] = "Direction_10" 
 
     return va_data
-  ### Action_9010 ###################################################
-  def Action_9010(va_data):
+  ### Action_010_9010 ###################################################
+  def Action_010_9010(va_data):
 
     va_data['va']['direction']['v'] = "Direction_10" 
 
     return va_data
-
-  ### Action_10_000 ###################################################
-  def Action_10_000(va_data):
- 
-    va_data['va']['direction']['v'] = "Direction_10" 
-
-    return va_data    
-  ### Action_10_010 ###################################################
-  def Action_10_010(va_data):
-    
-    va_data['va']['direction']['v'] = "Direction_10" 
-
-    return va_data    
-  ### Action_10_020 ###################################################
-  def Action_10_020(va_data):
-    
-    va_data['va']['direction']['v'] = "Direction_10" 
-
-    return va_data    
+  
 ####################################################################
 ### Actions Class | End <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 ####################################################################
@@ -377,7 +369,7 @@ class VA_box:
     va_data['va']['agent_position']['d'] = "It is info about what is v-agent doing at this moment"
 
     va_data['va']['script_group_code'] = {}
-    va_data['va']['script_group_code']['v'] = 'va_script_00'
+    va_data['va']['script_group_code']['v'] = 'va_script_000'
     va_data['va']['script_group_code']['d'] = "The script group code"
 	
     va_data['va']['script_instance'] = {}
@@ -397,7 +389,7 @@ class VA_box:
     va_data['va']['previous_action']['d'] = "The previous Action"
 
     va_data['va']['current_action'] = {}
-    va_data['va']['current_action']['v'] = 'Action_000'
+    va_data['va']['current_action']['v'] = 'Action_000_0000'
     va_data['va']['current_action']['d'] = "The current Action"
 
     va_data['va']['direction'] = {}
@@ -428,7 +420,7 @@ class VA_box:
 
     ### End | The VAOP variables setting
     
-    va_data = Actions.Action_000(va_data)
+    va_data = Actions.Action_000_0000(va_data)
   
     while 1 == 1: 
       va_data['va']['jump']['v'] += 1
@@ -531,11 +523,11 @@ va_data['va'] = {"is_tracking_on":{"d":"Is tracing ON?? (True/False)","v":True}}
 
 """
 va_data['va']['tracking_actions'] = {}
-va_data['va']['tracking_actions']['v'] = ['Action_010']
+va_data['va']['tracking_actions']['v'] = ['Action_010_0010']
 va_data['va']['tracking_actions']['d'] = "The list of actions to track"
 
 va_data['va']['jump_pause_after_actions'] = {}
-va_data['va']['jump_pause_after_actions']['v'] = ['Action_010']
+va_data['va']['jump_pause_after_actions']['v'] = ['Action_010_0010']
 va_data['va']['jump_pause_after_actions']['d'] = "The jump pause after actions"
 """
 ### End the setting for log and tracking options ##################
